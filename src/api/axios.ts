@@ -6,6 +6,8 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from 'axios';
 
+import { getAccessToken, clearAccessToken } from '../auth/token';
+
 const API_BASE_URL = import.meta.env.DEV ? '/api' : (import.meta.env.VITE_API_BASE_URL ?? '/api');
 
 /**
@@ -18,15 +20,6 @@ export type ApiError = {
 };
 
 /**
- * ✅ 토큰 저장/사용 방식은 백엔드 정책에 따라 달라짐
- * - httpOnly cookie(세션/JWT 쿠키)면 프론트가 토큰을 못 읽음 → Authorization 안 붙이고 withCredentials만 켜서 쿠키 자동 전송
- * - localStorage 토큰 방식이면 아래처럼 Authorization 헤더에 붙임
- */
-function getAccessToken(): string | null {
-  return window.sessionStorage.getItem('accessToken');
-}
-
-/**
  * axios 에러/기타 에러를 ApiError로 표준화
  */
 function toApiError(error: unknown): ApiError {
@@ -34,7 +27,6 @@ function toApiError(error: unknown): ApiError {
     const e = error as AxiosError<unknown>;
     const status = e.response?.status ?? 0;
 
-    // 서버 에러 메시지 키가 프로젝트마다 달라서 여러 케이스를 흡수
     const dataAny = e.response?.data as any;
 
     const message =
@@ -52,6 +44,19 @@ function toApiError(error: unknown): ApiError {
     message: '알 수 없는 오류가 발생했습니다.',
     data: error,
   };
+}
+
+function handleUnauthorized() {
+  clearAccessToken();
+
+  const pathname = window.location.pathname;
+  const search = window.location.search;
+
+  // 이미 /login이면 무한루프 방지
+  if (pathname.startsWith('/login')) return;
+
+  const from = encodeURIComponent(pathname + search);
+  window.location.replace(`/login?from=${from}`);
 }
 
 /**
@@ -110,6 +115,7 @@ http.interceptors.response.use(
     // ✅ 공통 처리 최소 예시
     // - 401이면 로그아웃 처리 / 로그인 이동 등은 프로젝트 정책 정해지면 여기서 처리
     if (apiError.status === 401) {
+      handleUnauthorized();
     }
 
     return Promise.reject(apiError);
