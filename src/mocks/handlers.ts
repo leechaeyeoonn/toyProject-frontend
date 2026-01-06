@@ -1,4 +1,6 @@
 import { http, HttpResponse } from 'msw';
+// dashboardData 대신 실제 export 된 변수 이름들을 중괄호 { } 안에 써주세요.
+import * as dashboardData from './data/dashboardData';
 
 type LoginRequest = {
   email: string;
@@ -49,5 +51,14 @@ export const handlers = [
     }
 
     return HttpResponse.json({ user: TEST_USER }, { status: 200 });
+  }),
+
+  // 이제 dashboardData.mockSummary 처럼 접근할 수 있습니다.
+  http.get('/api/admin/dashboard', () => {
+    return HttpResponse.json({
+      summary: dashboardData.mockSummary,
+      salesChart: dashboardData.mockSalesChart,
+      categoryData: dashboardData.mockCategoryData,
+    });
   }),
 ];
