@@ -27,7 +27,6 @@ export interface Product {
   price: number;
   stock: number;
   category: string;
-  imageUrl: string;
   status: '판매중' | '품절' | '숨김'; // 상태를 제한하여 오류 방지
   createdAt: string;
 }

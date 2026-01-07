@@ -21,6 +21,7 @@ import {
   MessageSquare,
   DollarSign,
 } from 'lucide-react';
+import axios from 'axios';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
@@ -28,9 +29,15 @@ const Dashboard = () => {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/admin/dashboard')
-      .then((res) => res.json())
-      .then((data) => setData(data));
+    axios
+      .get('/api/admin/dashboard') // .get을 명시해주는 게 좋습니다.
+      .then((res) => {
+        // res.json() 과정 없이 바로 res.data를 사용합니다!
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.error('데이터 호출 실패:', err);
+      });
   }, []);
 
   if (!data) return <div className="p-8">로딩 중...</div>;
