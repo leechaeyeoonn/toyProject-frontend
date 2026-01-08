@@ -7,7 +7,7 @@ interface ProductModalProps {
   onSubmit: (e: React.FormEvent) => void;
   title: string;
   productData: any;
-  setProductData: any;
+  setProductData: (data: any) => void;
 }
 
 const ProductModal = ({
@@ -18,63 +18,94 @@ const ProductModal = ({
   productData,
   setProductData,
 }: ProductModalProps) => {
-  // 닫혀있으면 아예 렌더링 안 함
   if (!isOpen) return null;
 
   return (
-    // 1. 전체 배경: 화면을 꽉 채우고 반투명 검정색으로 뒤를 덮음 (Dimmer)
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      {/* 2. 바깥 어두운 영역 클릭 시 닫히게 하고 싶다면 이 div 추가 (선택) */}
-      <div className="absolute inset-0" onClick={onClose} />
-
-      {/* 3. 모달 실제 박스: 흰색 배경 + 그림자 + 둥근 모서리 */}
-      <div className="relative bg-white w-full max-w-md mx-4 p-8 rounded-2xl shadow-2xl transform transition-all">
-        {/* 헤더 부분 */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800">{title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl">
-            &times;
-          </button>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl w-full max-auto max-w-lg shadow-xl overflow-hidden">
+        <div className="p-6 border-b">
+          <h2 className="text-xl font-bold">{title}</h2>
         </div>
 
-        {/* 폼 부분 */}
-        <form onSubmit={onSubmit} className="space-y-5">
+        <form onSubmit={onSubmit} className="p-6 space-y-4">
+          {/* 상품명 */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">상품명</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">상품명</label>
             <input
               type="text"
-              placeholder="상품 이름을 입력하세요"
-              className="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
+              required
+              className="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none"
               value={productData.name}
               onChange={(e) => setProductData({ ...productData, name: e.target.value })}
-              required
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">가격 (원)</label>
-            <input
-              type="number"
-              placeholder="0"
-              className="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
-              value={productData.price}
-              onChange={(e) => setProductData({ ...productData, price: Number(e.target.value) })}
-              required
-            />
+          <div className="grid grid-cols-2 gap-4">
+            {/* 카테고리 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">카테고리</label>
+              <select
+                className="w-full border rounded-lg p-2.5 outline-none"
+                value={productData.category}
+                onChange={(e) => setProductData({ ...productData, category: e.target.value })}
+              >
+                <option value="전자기기">전자기기</option>
+                <option value="의류">의류</option>
+                <option value="식품">식품</option>
+                <option value="기타">기타</option>
+              </select>
+            </div>
+            {/* 상태 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">판매 상태</label>
+              <select
+                className="w-full border rounded-lg p-2.5 outline-none"
+                value={productData.status}
+                onChange={(e) => setProductData({ ...productData, status: e.target.value })}
+              >
+                <option value="판매중">판매중</option>
+                <option value="품절">품절</option>
+                <option value="숨김">숨김</option>
+              </select>
+            </div>
           </div>
 
-          {/* 하단 버튼 영역 */}
-          <div className="flex gap-3 mt-8">
+          <div className="grid grid-cols-2 gap-4">
+            {/* 가격 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">가격</label>
+              <input
+                type="number"
+                required
+                className="w-full border rounded-lg p-2.5 outline-none"
+                value={productData.price}
+                onChange={(e) => setProductData({ ...productData, price: Number(e.target.value) })}
+              />
+            </div>
+            {/* 재고 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">재고</label>
+              <input
+                type="number"
+                required
+                className="w-full border rounded-lg p-2.5 outline-none"
+                value={productData.stock}
+                onChange={(e) => setProductData({ ...productData, stock: Number(e.target.value) })}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 mt-8">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 px-4 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 font-medium transition"
+              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
             >
               취소
             </button>
             <button
               type="submit"
-              className="flex-1 py-3 px-4 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-bold shadow-lg shadow-indigo-200 transition"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
             >
               저장하기
             </button>

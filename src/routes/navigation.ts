@@ -17,4 +17,8 @@ export const navigation: NavSection[] = [
       { label: '거래 내역 관리', to: '/admin/order' },
     ],
   },
+  {
+    title: '사용자',
+    items: [{ label: '상품 목록', to: '/user/products' }],
+  },
 ];

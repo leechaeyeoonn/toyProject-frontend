@@ -6,6 +6,8 @@ import MyReservationsPage from '@/pages/admin/AdminOrderPage';
 import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
 import AdminProductsPage from '@/pages/admin/AdminProductsPage';
 import AdminOrderPage from '@/pages/admin/AdminOrderPage';
+import UserProductPage from '@/pages/users/UserProductsPage';
+import CartPage from '@/pages/users/CartPage';
 import LoginPage from '@/pages/auth/LoginPage';
 import SignupPage from '@/pages/auth/SignupPage';
 
@@ -49,6 +51,9 @@ export const router = createBrowserRouter([
           { path: '/admin', element: <AdminDashboardPage /> },
           { path: '/admin/products', element: <AdminProductsPage /> },
           { path: '/admin/order', element: <AdminOrderPage /> },
+          { path: '/user/products', element: <UserProductPage /> },
+          // ✅ 2. 여기에 장바구니 경로를 추가합니다.
+          { path: '/cart', element: <CartPage /> },
         ],
       },
     ],
